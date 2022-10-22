@@ -1,0 +1,9 @@
+{
+  "name": "elbibi",
+  "version": "1.0.0",
+  "description": "Do bibi and be fit",
+  "main": "index.js",
+  "author": "Romain Durade",
+  "license": "MIT",
+  "private": false
+}
