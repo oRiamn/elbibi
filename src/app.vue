@@ -1,121 +1,112 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="@/assets/logo.svg"
-      width="125"
-      height="125"
-    />
-
-    <div class="wrapper">
-      <nav>
-        <router-link to="/">Home</router-link>
-        <router-link to="/about">About</router-link>
+  <div class="appContainer">
+    <div class="appHeader">
+      <div class="appLogo">
+        <img
+          alt="Vue logo"
+          class="logo"
+          src="@/assets/logo.svg"
+          width="50"
+          height="50"
+        />
+      </div>
+      <div class="userMenu">MENU</div>
+    </div>
+    <div class="appSubHeader"> Sub-Header </div>
+    <div class="appContent">
+      <router-view />
+    </div>
+    <div class="appFooter">
+      <nav class="footerNav">
+        <ul class="footerNav-items">
+          <li class="footerNav-item">
+            <router-link class="footerNav-itemButton" to="/">Home</router-link>
+          </li>
+          <li class="footerNav-item">
+            <router-link class="footerNav-itemButton" to="/about"
+              >About</router-link
+            >
+          </li>
+          <li class="footerNav-item">
+            <router-link class="footerNav-itemButton" to="/settings"
+              >Settings</router-link
+            >
+          </li>
+        </ul>
       </nav>
     </div>
-  </header>
-
-  <router-view />
+  </div>
 </template>
 
 <style>
 @import '@/assets/base.css';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
+.appContainer {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.appContainer > * {
+  border: 2px solid var(--vt-c-divider-light-1);
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.appHeader {
+  background-color: var(--color-background);
+  padding: 5px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
+.appContent {
+  flex-grow: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+.appFooter {
+  background-color:  var(--color-background);
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+.appLogo {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-nav a.router-link-exact-active {
+.userMenu {
   color: var(--color-text);
+  border: 1px solid var(--color-border);
+  padding: 5px 10px;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.footerNav-items {
+  display: flex;
+  justify-content: space-between;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+.footerNav-item {
+  flex-grow: 1;
 }
 
-nav a:first-of-type {
-  border: 0;
+.footerNav-itemButton {
+  display: block;
+  padding: 10px;
+  color: var(--color-text);
+  text-align: center;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.footerNav-itemButton:hover,
+.router-link-active.router-link-exact-active {
+  background-color:  var(--color-border-hover);
 }
 </style>
