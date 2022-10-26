@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import TheWelcome from '@/components/the_welcome.vue'
+import Counter from '@/components/counter.vue';
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <h1>This is a counter</h1>
+    <Counter></Counter>
   </main>
 </template>

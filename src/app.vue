@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import HelloWorld from '@/components/hello_world.vue'
 </script>
 
 <template>
@@ -13,8 +12,6 @@ import HelloWorld from '@/components/hello_world.vue'
     />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
       <nav>
         <router-link to="/">Home</router-link>
         <router-link to="/about">About</router-link>
