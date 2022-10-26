@@ -1,0 +1,11 @@
+import { render } from '@testing-library/vue'
+
+import {{pascalCase componentName}} from './{{ snakeCase componentName }}.vue'
+
+describe('{{titleCase componentName}}', () => {
+  it('Displays {{pascalCase componentName}}', async () => {
+    const { getByText } = render({{pascalCase componentName}})
+
+    expect(getByText('{{pascalCase componentName}}').textContent).falsy()
+  })
+})

@@ -1,9 +1,58 @@
 {
   "name": "elbibi",
   "version": "1.0.0",
-  "description": "Do bibi and be fit",
-  "main": "index.js",
-  "author": "Romain Durade",
   "license": "MIT",
-  "private": false
+  "author": "Romain Durade",
+  "scripts": {
+    "build": "vue-tsc --noEmit && vite build",
+    "build-storybook": "build-storybook",
+    "coverage": "vitest --coverage",
+    "dev": "vite",
+    "generate": "plop",
+    "lint": "eslint . --fix",
+    "preview": "vite preview --port 5050",
+    "storybook": "start-storybook -p 6006",
+    "test": "vitest",
+    "typecheck": "vue-tsc --noEmit",
+    "hi": "node"
+  },
+  "resolutions": {
+    "@types/react": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.1.tgz"
+  },
+  "dependencies": {
+    "pinia": "^2.0.6",
+    "vue": "^3.2.26",
+    "vue-router": "^4.0.12"
+  },
+  "devDependencies": {
+    "@fazulk/testing-vue3": "^0.0.3",
+    "@storybook/addon-actions": "^6.4.14",
+    "@storybook/addon-essentials": "^6.4.14",
+    "@storybook/addon-interactions": "^6.4.14",
+    "@storybook/addon-links": "^6.4.14",
+    "@storybook/jest": "^0.0.5",
+    "@storybook/testing-library": "^0.0.7",
+    "@storybook/vue3": "^6.4.14",
+    "@testing-library/vue": "^6.4.2",
+    "@types/node": "^16.11.12",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "@vitejs/plugin-vue": "^2.0.0",
+    "@vue/eslint-config-typescript": "^9.1.0",
+    "@vue/test-utils": "^2.0.0-rc.17",
+    "c8": "^7.11.0",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-storybook": "^0.5.3",
+    "eslint-plugin-vue": "^8.2.0",
+    "happy-dom": "^2.25.1",
+    "plop": "^3.0.5",
+    "prettier": "^2.5.1",
+    "storybook-builder-vite": "^0.1.13",
+    "typescript": "^4.5.4",
+    "vite": "^2.7.13",
+    "vitest": "^0.2.3",
+    "vue-tsc": "^0.30.0"
+  }
 }

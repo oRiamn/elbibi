@@ -1,0 +1,54 @@
+name: Prod CI/CD
+
+on:  
+  pull_request:
+    branches:             
+      - main 
+    types:
+      - closed    
+
+jobs:
+  publish_release:
+    name: Tag and Publish
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true    
+    steps:      
+      - uses: actions/checkout@v2  
+        with:
+          token: ${{ secrets.BUILD_RELEASE }}       
+
+      - uses: release-drafter/release-drafter@v5    
+        id: pre_release           
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}                     
+      
+      - name: Update package.json version
+        uses: jossef/action-set-json-field@v1
+        with:
+          file: package.json
+          field: version
+          value: ${{ steps.pre_release.outputs.tag_name }}        
+
+      - name: commit and push package.json
+        run: |
+         git config user.name github-actions
+         git config user.email github-actions@github.com        
+         git add -A
+         git commit -m "Updated version to ${{ steps.pre_release.outputs.tag_name }}"         
+         git push          
+
+      - uses: eregon/publish-release@v1          
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.pre_release.outputs.id }}
+
+      # - name: Check object
+      #   run: |
+      #     cat << OBJECT
+      #     ${{ toJson(github) }}
+      #     OBJECT  
+
+
+
+
