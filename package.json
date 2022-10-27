@@ -12,7 +12,8 @@
     "lint": "eslint . --fix",
     "preview": "vite preview --port 5050",
     "storybook": "start-storybook -p 6006",
-    "test": "vitest",
+    "test": "vitest run --reporter verbose",
+    "test:watch": "vitest watch",
     "typecheck": "vue-tsc --noEmit",
     "hi": "node"
   },
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@fazulk/testing-vue3": "^0.0.3",
+    "@pinia/testing": "^0.0.14",
     "@storybook/addon-actions": "^6.4.14",
     "@storybook/addon-essentials": "^6.4.14",
     "@storybook/addon-interactions": "^6.4.14",

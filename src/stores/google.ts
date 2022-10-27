@@ -22,8 +22,8 @@ export const usegoogleStore = defineStore({
       const libs = [
         'https://apis.google.com/js/api.js',
         'https://accounts.google.com/gsi/client'
-      ];
-      
+      ]
+
       try {
         await Promise.all(
           libs.map((src) => {
@@ -39,7 +39,7 @@ export const usegoogleStore = defineStore({
         await new Promise((res) => {
           window.gapi.load('client', async function () {
             await Promise.all([window.gapi.client.load('drive', 'v3')])
-            res(true);
+            res(true)
           })
         })
 
@@ -52,7 +52,7 @@ export const usegoogleStore = defineStore({
         console.error(err)
       }
     },
-    async authenticate() {
+    authenticate: async function () {
       tokenClient = await new Promise((res) => {
         const token = window.google.accounts.oauth2.initTokenClient({
           client_id: import.meta.env.VITE_APP_CLIENT_ID,

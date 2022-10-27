@@ -28,9 +28,7 @@ export default defineComponent({
 
 <template>
   <div class="launch">
-    <div> isReady: {{ gstore.isReady }} </div>
-    <div> isAuthenticated: {{ gstore.isAuthenticated }} </div>
-    <Button v-if="gstore.isReady" :text="'Launch app'" v-on:click="launchApp" />
+    <Button id="authentbtn" v-if="gstore.isReady" :text="'Launch app'" v-on:click="launchApp" />
   </div>
 </template>
 
