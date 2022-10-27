@@ -10,3 +10,9 @@ interface ImportMetaEnv {
   readonly VITE_APP_TITLE: string
   // more env variables...
 }
+
+
+interface window {
+  readonly gapi: any;
+  readonly google: any;
+}
