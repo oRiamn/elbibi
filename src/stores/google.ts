@@ -1,14 +1,6 @@
 import { defineStore } from 'pinia'
 
-// Discovery doc URL for APIs used by the quickstart
-const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4'
-
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-const SCOPES = 'https://www.googleapis.com/auth/drive.file'
-
 let tokenClient: any
-
 export const usegoogleStore = defineStore({
   id: 'google',
   state: () => ({
@@ -56,7 +48,7 @@ export const usegoogleStore = defineStore({
       tokenClient = await new Promise((res) => {
         const token = window.google.accounts.oauth2.initTokenClient({
           client_id: import.meta.env.VITE_APP_CLIENT_ID,
-          scope: SCOPES,
+          scope: import.meta.env.VITE_APP_SCOPES,
           callback: async (resp: any) => {
             if (resp.error !== undefined) {
               throw resp
@@ -66,7 +58,7 @@ export const usegoogleStore = defineStore({
         })
         window.gapi.client.init({
           apiKey: import.meta.env.VITE_APP_API_KEY,
-          discoveryDocs: [DISCOVERY_DOC]
+          discoveryDocs: [import.meta.env.VITE_APP_DISCOVERY_DOC]
         })
         token.requestAccessToken({ prompt: '' })
       })
