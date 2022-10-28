@@ -11,12 +11,12 @@ export default function (plop) {
     actions: [
       {
         type: 'add',
-        path: 'src/stores/{{snakeCase storeId}}/{{snakeCase storeId}}.ts',
+        path: 'src/stores/{{snakeCase storeId}}.ts',
         templateFile: 'generators/store.ts.hbs'
       },
       {
         type: 'add',
-        path: 'src/stores/{{snakeCase storeId}}/tests/{{snakeCase storeId}}.test.ts',
+        path: 'src/stores/tests/{{snakeCase storeId}}.test.ts',
         templateFile: 'generators/store.test.ts.hbs'
       }
     ]
