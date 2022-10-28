@@ -1,4 +1,22 @@
 import { defineStore } from 'pinia'
+import { loadScript } from 'vue-plugin-load-script'
+
+export const loadExternalScripts = async (list: string[]) => {
+  return Promise.all(list.map((src) => loadScript(src)))
+}
+
+export const googleClientLoad = async function (list: string[][]) {
+  return new Promise((res, rej) => {
+    window.gapi.load(
+      'client',
+      async function () {
+        await Promise.all(list.map((args) => window.gapi.client.load(...args)))
+        res(true)
+      },
+      rej
+    )
+  })
+}
 
 let tokenClient: any
 export const usegoogleStore = defineStore({
@@ -11,32 +29,13 @@ export const usegoogleStore = defineStore({
   getters: {},
   actions: {
     loadGoogleApi: async function () {
-      const libs = [
-        'https://apis.google.com/js/api.js',
-        'https://accounts.google.com/gsi/client'
-      ]
-
       try {
-        await Promise.all(
-          libs.map((src) => {
-            const script = document.createElement('script')
-            script.src = src
-            document.body.appendChild(script)
-            return new Promise((res) => {
-              script.onload = res
-            })
-          })
-        )
-
-        await new Promise((res) => {
-          window.gapi.load('client', async function () {
-            await Promise.all([window.gapi.client.load('drive', 'v3')])
-            res(true)
-          })
-        })
-
-        console.log('google is loaded')
-
+        await loadExternalScripts([
+          'https://apis.google.com/js/api.js',
+          'https://accounts.google.com/gsi/client'
+        ])
+        await googleClientLoad([['drive', 'v3']])
+        console.log('google api is ready')
         this.$patch((state) => {
           state.isReady = true
         })
@@ -49,8 +48,9 @@ export const usegoogleStore = defineStore({
         const token = window.google.accounts.oauth2.initTokenClient({
           client_id: import.meta.env.VITE_APP_CLIENT_ID,
           scope: import.meta.env.VITE_APP_SCOPES,
-          callback: async (resp: any) => {
+          callback: (resp: any) => {
             if (resp.error !== undefined) {
+              console.error(resp.error)
               throw resp
             }
             res(token)

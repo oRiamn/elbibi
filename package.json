@@ -23,6 +23,7 @@
   "dependencies": {
     "pinia": "^2.0.6",
     "vue": "^3.2.26",
+    "vue-plugin-load-script": "^2.x.x",
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
