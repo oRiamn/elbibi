@@ -10,8 +10,14 @@ export const googleClientLoad = async function (list: string[][]) {
     window.gapi.load(
       'client',
       async function () {
-        await Promise.all(list.map((args) => window.gapi.client.load(...args)))
-        res(true)
+        try {
+          await Promise.all(
+            list.map((args) => window.gapi.client.load(...args))
+          )
+          res(true)
+        } catch (error) {
+          rej(error)
+        }
       },
       rej
     )
