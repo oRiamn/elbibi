@@ -13,9 +13,3 @@ interface ImportMetaEnv {
   readonly VITE_APP_DISCOVERY_DOC: string
   readonly VITE_APP_SCOPES: string
 }
-
-
-interface window {
-  readonly gapi: any;
-  readonly google: any;
-}

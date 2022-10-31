@@ -41,7 +41,7 @@ describe('Google Store', () => {
 
     it('should inject google api script base', async () => {
       loadScriptSpy.mockResolvedValue(true)
-      gapi.load.mockImplementation((_n, callback) => callback())
+      gapi.load.mockImplementation((_n, { callback }) => callback())
 
       gapi.client.load.mockResolvedValue(true)
 
@@ -56,7 +56,7 @@ describe('Google Store', () => {
 
     it('should load client', async () => {
       loadScriptSpy.mockResolvedValue(true)
-      gapi.load.mockImplementation((_n, callback) => callback())
+      gapi.load.mockImplementation((_n, { callback }) => callback())
 
       gapi.client.load.mockResolvedValue(true)
 
@@ -64,16 +64,17 @@ describe('Google Store', () => {
       await gstore.loadGoogleApi()
 
       expect(gapi.load).toHaveBeenCalledTimes(1)
-      expect(gapi.load).toHaveBeenCalledWith(
-        'client',
-        expect.any(Function),
-        expect.any(Function)
-      )
+      expect(gapi.load).toHaveBeenCalledWith('client', {
+        onerror: expect.any(Function),
+        ontimeout: expect.any(Function),
+        callback: expect.any(Function),
+        timeout: expect.any(Number)
+      })
     })
 
     it('should load drive version 3 using gapi.client.load', async () => {
       loadScriptSpy.mockResolvedValue(true)
-      gapi.load.mockImplementation((_n, callback) => callback())
+      gapi.load.mockImplementation((_n, { callback }) => callback())
 
       gapi.client.load.mockResolvedValue(true)
 
@@ -87,7 +88,7 @@ describe('Google Store', () => {
     describe('when google api fully loaded', () => {
       beforeEach(async () => {
         loadScriptSpy.mockResolvedValue(true)
-        gapi.load.mockImplementation((_n, callback) => callback())
+        gapi.load.mockImplementation((_n, { callback }) => callback())
 
         gapi.client.load.mockResolvedValue(true)
       })
@@ -97,7 +98,7 @@ describe('Google Store', () => {
         expect(gstore.isReady).toBe(true)
       })
 
-      it('should log succes message', async () => {
+      it('should log success message', async () => {
         const gstore = usegoogleStore()
         await gstore.loadGoogleApi()
 
@@ -117,7 +118,7 @@ describe('Google Store', () => {
           }
         })
 
-        gapi.load.mockImplementation((_n, callback) => callback())
+        gapi.load.mockImplementation((_n, { callback }) => callback())
 
         gapi.client.load.mockResolvedValue(true)
       })
@@ -154,7 +155,7 @@ describe('Google Store', () => {
           }
         })
 
-        gapi.load.mockImplementation((_n, callback) => callback())
+        gapi.load.mockImplementation((_n, { callback }) => callback())
 
         gapi.client.load.mockResolvedValue(true)
       })
@@ -185,7 +186,7 @@ describe('Google Store', () => {
 
       beforeEach(async () => {
         loadScriptSpy.mockResolvedValue(true)
-        gapi.load.mockImplementation((_n, _x, fail) => fail(errormsg))
+        gapi.load.mockImplementation((_n, { onerror }) => onerror(errormsg))
       })
 
       it('should not try to load drive version 3 using gapi.client.load', async () => {
@@ -221,7 +222,7 @@ describe('Google Store', () => {
 
       beforeEach(async () => {
         loadScriptSpy.mockResolvedValue(true)
-        gapi.load.mockImplementation((_n, callback) => callback())
+        gapi.load.mockImplementation((_n, { callback }) => callback())
         gapi.client.load.mockRejectedValue(errormsg)
       })
 
@@ -241,6 +242,150 @@ describe('Google Store', () => {
       it('should log error message', async () => {
         const gstore = usegoogleStore()
         await gstore.loadGoogleApi()
+
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error).toHaveBeenCalledWith(errormsg)
+      })
+    })
+  })
+
+  describe('authenticate', () => {
+    let gapi: { client: { init: SpyInstance } }
+    let google: { accounts: { oauth2: { initTokenClient: SpyInstance } } }
+    let token: {
+      requestAccessToken: SpyInstance
+    }
+    beforeEach(() => {
+      gapi = {
+        client: {
+          init: vi.fn()
+        }
+      }
+      google = {
+        accounts: {
+          oauth2: {
+            initTokenClient: vi.fn()
+          }
+        }
+      }
+      token = {
+        requestAccessToken: vi.fn()
+      }
+      window.gapi = gapi
+      window.google = google
+      console.log = vi.fn()
+      console.error = vi.fn()
+    })
+
+    it('should call google.accounts.oauth2.initTokenClient', async () => {
+      let callback: Function
+      google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
+        callback = config.callback
+        return token
+      })
+      token.requestAccessToken.mockImplementation(() => {
+        callback({})
+      })
+
+      const gstore = usegoogleStore()
+      await gstore.authenticate()
+      expect(google.accounts.oauth2.initTokenClient).toBeCalledTimes(1)
+      expect(google.accounts.oauth2.initTokenClient).toBeCalledWith({
+        client_id: import.meta.env.VITE_APP_CLIENT_ID,
+        scope: import.meta.env.VITE_APP_SCOPES,
+        callback: expect.any(Function)
+      })
+    })
+
+    it('should call gapi.client.init', async () => {
+      let callback: Function
+      google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
+        callback = config.callback
+        return token
+      })
+      token.requestAccessToken.mockImplementation(() => {
+        callback({})
+      })
+
+      const gstore = usegoogleStore()
+      await gstore.authenticate()
+      expect(gapi.client.init).toBeCalledTimes(1)
+      expect(gapi.client.init).toBeCalledWith({
+        apiKey: import.meta.env.VITE_APP_API_KEY,
+        discoveryDocs: [import.meta.env.VITE_APP_DISCOVERY_DOC]
+      })
+    })
+
+    it('should call token.requestAccessToken', async () => {
+      let callback: Function
+      google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
+        callback = config.callback
+        return token
+      })
+      token.requestAccessToken.mockImplementation(() => {
+        callback({})
+      })
+
+      const gstore = usegoogleStore()
+      await gstore.authenticate()
+      expect(token.requestAccessToken).toBeCalledTimes(1)
+      expect(token.requestAccessToken).toBeCalledWith({ prompt: '' })
+    })
+
+    describe('when authentication is fullyfied', () => {
+      beforeEach(() => {
+        let callback: Function
+        google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
+          callback = config.callback
+          return token
+        })
+        token.requestAccessToken.mockImplementation(() => {
+          callback({})
+        })
+      })
+      it('should patch state.isAuthenticated to true', async () => {
+        const gstore = usegoogleStore()
+        await gstore.authenticate()
+        expect(gstore.isAuthenticated).toBe(true)
+      })
+
+      it('should log success message', async () => {
+        const gstore = usegoogleStore()
+        await gstore.authenticate()
+
+        expect(console.log).toHaveBeenCalledTimes(1)
+        expect(console.log).toHaveBeenCalledWith('authentication success')
+      })
+    })
+
+    describe('when authentication fail', () => {
+      const errormsg = 'an error message'
+      beforeEach(() => {
+        let callback: Function
+        google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
+          callback = config.callback
+          return token
+        })
+        token.requestAccessToken.mockImplementation(() => {
+          callback({ error: errormsg })
+        })
+      })
+      it('should keep state.isAuthenticated to false', async () => {
+        const gstore = usegoogleStore()
+        await gstore.authenticate()
+        expect(gstore.isAuthenticated).toBe(false)
+      })
+
+      it('should not log success message', async () => {
+        const gstore = usegoogleStore()
+        await gstore.authenticate()
+
+        expect(console.log).toHaveBeenCalledTimes(0)
+      })
+
+      it('should log error', async () => {
+        const gstore = usegoogleStore()
+        await gstore.authenticate()
 
         expect(console.error).toHaveBeenCalledTimes(1)
         expect(console.error).toHaveBeenCalledWith(errormsg)

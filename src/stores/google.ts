@@ -1,26 +1,29 @@
 import { defineStore } from 'pinia'
 import { loadScript } from 'vue-plugin-load-script'
 
-export const loadExternalScripts = async (list: string[]) => {
+async function loadExternalScripts(list: string[]) {
   return Promise.all(list.map((src) => loadScript(src)))
 }
 
-export const googleClientLoad = async function (list: string[][]) {
+async function googleClientLoad(list: { name: string; version: string }[]) {
   return new Promise((res, rej) => {
-    window.gapi.load(
-      'client',
-      async function () {
+    window.gapi.load('client', {
+      callback: async function () {
         try {
           await Promise.all(
-            list.map((args) => window.gapi.client.load(...args))
+            list.map(({ name, version }) =>
+              window.gapi.client.load(name, version)
+            )
           )
           res(true)
         } catch (error) {
           rej(error)
         }
       },
-      rej
-    )
+      timeout: 500,
+      onerror: rej,
+      ontimeout: rej
+    })
   })
 }
 
@@ -40,7 +43,7 @@ export const usegoogleStore = defineStore({
           'https://apis.google.com/js/api.js',
           'https://accounts.google.com/gsi/client'
         ])
-        await googleClientLoad([['drive', 'v3']])
+        await googleClientLoad([{ name: 'drive', version: 'v3' }])
         console.log('google api is ready')
         this.$patch((state) => {
           state.isReady = true
@@ -50,28 +53,32 @@ export const usegoogleStore = defineStore({
       }
     },
     authenticate: async function () {
-      tokenClient = await new Promise((res) => {
-        const token = window.google.accounts.oauth2.initTokenClient({
-          client_id: import.meta.env.VITE_APP_CLIENT_ID,
-          scope: import.meta.env.VITE_APP_SCOPES,
-          callback: (resp: any) => {
-            if (resp.error !== undefined) {
-              console.error(resp.error)
-              throw resp
+      try {
+        tokenClient = await new Promise((res, rej) => {
+          const token = window.google.accounts.oauth2.initTokenClient({
+            client_id: import.meta.env.VITE_APP_CLIENT_ID,
+            scope: import.meta.env.VITE_APP_SCOPES,
+            callback: (tokenResponse) => {
+              if (tokenResponse.error !== undefined) {
+                rej(tokenResponse.error)
+              }
+              res(token)
             }
-            res(token)
-          }
+          })
+          window.gapi.client.init({
+            apiKey: import.meta.env.VITE_APP_API_KEY as string,
+            discoveryDocs: [import.meta.env.VITE_APP_DISCOVERY_DOC as string]
+          })
+          token.requestAccessToken({ prompt: '' })
         })
-        window.gapi.client.init({
-          apiKey: import.meta.env.VITE_APP_API_KEY,
-          discoveryDocs: [import.meta.env.VITE_APP_DISCOVERY_DOC]
-        })
-        token.requestAccessToken({ prompt: '' })
-      })
 
-      this.$patch((state) => {
-        state.isAuthenticated = true
-      })
+        console.log('authentication success')
+        this.$patch((state) => {
+          state.isAuthenticated = true
+        })
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 })
