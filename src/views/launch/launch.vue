@@ -20,6 +20,7 @@ export default defineComponent({
   methods: {
     launchApp: async function () {
       await this.gstore.authenticate()
+      await this.gstore.loadSpreadsheet()
       this.$router.push({ name: 'home' })
     }
   }
@@ -28,7 +29,12 @@ export default defineComponent({
 
 <template>
   <div class="launch">
-    <Button id="authentbtn" v-if="gstore.isReady" :text="'Launch app'" v-on:click="launchApp" />
+    <Button
+      id="authentbtn"
+      v-if="gstore.isReady"
+      :text="'Launch app'"
+      v-on:click="launchApp"
+    />
   </div>
 </template>
 

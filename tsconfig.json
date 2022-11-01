@@ -19,8 +19,17 @@
     "incremental": false,
     "noUnusedLocals": true,
     "strictNullChecks": true,
-    "types": ["vite/client", "vitest/globals", "gapi", "gapi.auth2", "google.accounts"],
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "google.accounts",
+      "gapi",
+      "gapi.auth2",
+      "gapi.client.drive",
+      "gapi.client.sheets"
+    ],
     "noImplicitAny": true
   },
-  "include": ["vite.config.*", "env.d.ts", "src/**/*", "src/**/*.vue"]
+  "include": ["vite.config.*", "env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["**/*.test.ts"]
 }

@@ -1,11 +1,16 @@
 import { createPinia, setActivePinia } from 'pinia'
-import { SpyInstance, spyOn } from 'vitest'
+import { SpyInstance, spyOn, vi } from 'vitest'
 import * as loadScript from 'vue-plugin-load-script'
+import { gapimock, doGapiMock } from './mocks/lib/gapi'
+import { googlemock, doGoogleMock } from './mocks/lib/google'
+
 import { usegoogleStore } from '../google'
 
 describe('Google Store', () => {
+  let gapi: gapimock
   beforeEach(() => {
     setActivePinia(createPinia())
+    gapi = doGapiMock(window)
   })
 
   it('should define isReady to false by default', () => {
@@ -18,23 +23,15 @@ describe('Google Store', () => {
     expect(gstore.isAuthenticated).toBe(false)
   })
 
-  it('should define spreadsheetId to null by default', () => {
+  it('should define spreadsheetId to empty string by default', () => {
     const gstore = usegoogleStore()
-    expect(gstore.spreadsheetId).toBe(null)
+    expect(gstore.spreadsheetId).toBe('')
   })
 
   describe('loadGoogleApi', () => {
     let loadScriptSpy: SpyInstance
-    let gapi: { load: SpyInstance; client: { load: SpyInstance } }
     beforeEach(() => {
       loadScriptSpy = spyOn(loadScript, 'loadScript')
-      gapi = {
-        load: vi.fn(),
-        client: {
-          load: vi.fn()
-        }
-      }
-      window.gapi = gapi
       console.log = vi.fn()
       console.error = vi.fn()
     })
@@ -250,29 +247,15 @@ describe('Google Store', () => {
   })
 
   describe('authenticate', () => {
-    let gapi: { client: { init: SpyInstance } }
-    let google: { accounts: { oauth2: { initTokenClient: SpyInstance } } }
+    let google: googlemock
     let token: {
       requestAccessToken: SpyInstance
     }
     beforeEach(() => {
-      gapi = {
-        client: {
-          init: vi.fn()
-        }
-      }
-      google = {
-        accounts: {
-          oauth2: {
-            initTokenClient: vi.fn()
-          }
-        }
-      }
+      google = doGoogleMock(window)
       token = {
         requestAccessToken: vi.fn()
       }
-      window.gapi = gapi
-      window.google = google
       console.log = vi.fn()
       console.error = vi.fn()
     })
@@ -389,6 +372,157 @@ describe('Google Store', () => {
 
         expect(console.error).toHaveBeenCalledTimes(1)
         expect(console.error).toHaveBeenCalledWith(errormsg)
+      })
+    })
+  })
+
+  describe('loadSpreadsheet', () => {
+    const spreadsheetId = 'aspreadsheetid'
+    const title = import.meta.env.VITE_APP_SPREADSHEETNAME
+    describe('when spreadsheet exist', () => {
+      beforeEach(() => {
+        gapi.client.drive.files.list.mockResolvedValue({
+          result: {
+            files: [
+              {
+                id: spreadsheetId
+              }
+            ]
+          }
+        })
+        console.log = vi.fn()
+        console.error = vi.fn()
+      })
+
+      it('should call gapi.client.drive.files.list for fetching spreadsheet id', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(gapi.client.drive.files.list).toBeCalledTimes(1)
+        expect(gapi.client.drive.files.list).toBeCalledWith({
+          pageSize: 10,
+          fields:
+            'nextPageToken, files(id, name, imageMediaMetadata, mimeType)',
+          q: `name='${title}' and mimeType='application/vnd.google-apps.spreadsheet'`
+        })
+      })
+
+      it('should log success fetching', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(console.log).toBeCalledTimes(1)
+        expect(console.log).toBeCalledWith('spreadsheet loaded')
+      })
+
+      it('should patch spreadsheetid state', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(gstore.spreadsheetId).toBe(spreadsheetId)
+      })
+    })
+
+    describe('when gapi.client.drive.files.list fail', () => {
+      const errormsg = 'an error message'
+      beforeEach(() => {
+        gapi.client.drive.files.list.mockRejectedValue(errormsg)
+        console.log = vi.fn()
+        console.error = vi.fn()
+      })
+
+      it('should log success fetching', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(console.log).toBeCalledTimes(0)
+      })
+
+      it('should log error message', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(console.error).toBeCalledTimes(1)
+        expect(console.error).toBeCalledWith(errormsg)
+      })
+
+      it('should not patch spreadsheetid state', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(gstore.spreadsheetId).toBe('')
+      })
+    })
+
+    describe('when spreadsheet does not exist', () => {
+      beforeEach(() => {
+        gapi.client.drive.files.list.mockResolvedValue({
+          result: {
+            files: []
+          }
+        })
+
+        gapi.client.sheets.spreadsheets.create.mockResolvedValue({
+          result: {
+            spreadsheetId
+          }
+        })
+        console.log = vi.fn()
+        console.error = vi.fn()
+      })
+
+      it('should call gapi.client.sheets.spreadsheets.create creating a spreadsheet', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(gapi.client.sheets.spreadsheets.create).toBeCalledTimes(1)
+        expect(gapi.client.sheets.spreadsheets.create).toBeCalledWith({
+          resource: {
+            properties: {
+              title
+            }
+          }
+        })
+      })
+
+      it('should log success fetching', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(console.log).toBeCalledTimes(1)
+        expect(console.log).toBeCalledWith('spreadsheet loaded')
+      })
+
+      it('should patch spreadsheetid state', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(gstore.spreadsheetId).toBe(spreadsheetId)
+      })
+    })
+
+    describe('when gapi.client.sheets.spreadsheets.create fail', () => {
+      const errormsg = 'an error message'
+      beforeEach(() => {
+        gapi.client.drive.files.list.mockResolvedValue({
+          result: {
+            files: []
+          }
+        })
+
+        gapi.client.sheets.spreadsheets.create.mockRejectedValue(errormsg)
+        console.log = vi.fn()
+        console.error = vi.fn()
+      })
+
+      it('should log success fetching', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(console.log).toBeCalledTimes(0)
+      })
+
+      it('should log error message', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(console.error).toBeCalledTimes(1)
+        expect(console.error).toBeCalledWith(errormsg)
+      })
+
+      it('should not patch spreadsheetid state', async () => {
+        const gstore = usegoogleStore()
+        await gstore.loadSpreadsheet()
+        expect(gstore.spreadsheetId).toBe('')
       })
     })
   })

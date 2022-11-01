@@ -27,13 +27,12 @@ async function googleClientLoad(list: { name: string; version: string }[]) {
   })
 }
 
-let tokenClient: any
 export const usegoogleStore = defineStore({
   id: 'google',
   state: () => ({
     isReady: false,
     isAuthenticated: false,
-    spreadsheetId: null
+    spreadsheetId: ''
   }),
   getters: {},
   actions: {
@@ -54,7 +53,7 @@ export const usegoogleStore = defineStore({
     },
     authenticate: async function () {
       try {
-        tokenClient = await new Promise((res, rej) => {
+        await new Promise((res, rej) => {
           const token = window.google.accounts.oauth2.initTokenClient({
             client_id: import.meta.env.VITE_APP_CLIENT_ID,
             scope: import.meta.env.VITE_APP_SCOPES,
@@ -62,7 +61,7 @@ export const usegoogleStore = defineStore({
               if (tokenResponse.error !== undefined) {
                 rej(tokenResponse.error)
               }
-              res(token)
+              res(true)
             }
           })
           window.gapi.client.init({
@@ -71,10 +70,46 @@ export const usegoogleStore = defineStore({
           })
           token.requestAccessToken({ prompt: '' })
         })
-
         console.log('authentication success')
         this.$patch((state) => {
           state.isAuthenticated = true
+        })
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    loadSpreadsheet: async function () {
+      try {
+        let spreadsheetId: string
+        const title = import.meta.env.VITE_APP_SPREADSHEETNAME as string
+        const fileList = await window.gapi.client.drive.files.list({
+          pageSize: 10,
+          fields:
+            'nextPageToken, files(id, name, imageMediaMetadata, mimeType)',
+          q: `name='${title}' and mimeType='application/vnd.google-apps.spreadsheet'`
+        })
+        if (
+          fileList &&
+          fileList.result &&
+          fileList.result.files &&
+          fileList.result.files.length > 0
+        ) {
+          const [spreadsheet] = fileList.result.files
+          spreadsheetId = spreadsheet.id as string
+        } else {
+          const response = await window.gapi.client.sheets.spreadsheets.create({
+            resource: {
+              properties: {
+                title
+              }
+            }
+          })
+          spreadsheetId = response.result.spreadsheetId as string
+        }
+
+        console.log('spreadsheet loaded')
+        this.$patch((state) => {
+          state.spreadsheetId = spreadsheetId
         })
       } catch (error) {
         console.error(error)
