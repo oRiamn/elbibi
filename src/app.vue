@@ -25,6 +25,11 @@
             <router-link class="footerNav-itemButton" to="/">Home</router-link>
           </li>
           <li class="footerNav-item">
+            <router-link class="footerNav-itemButton" to="/workouts"
+              >Workouts</router-link
+            >
+          </li>
+          <li class="footerNav-item">
             <router-link class="footerNav-itemButton" to="/exercises"
               >Exercises</router-link
             >
@@ -72,7 +77,7 @@
 }
 
 .appFooter {
-  background-color:  var(--color-background);
+  background-color: var(--color-background);
 }
 
 .appLogo {
@@ -107,6 +112,6 @@
 
 .footerNav-itemButton:hover,
 .router-link-active {
-  background-color:  var(--color-border-hover);
+  background-color: var(--color-border-hover);
 }
 </style>
