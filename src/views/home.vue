@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import Counter from '@/components/counter.vue'
 </script>
 <template>
-  <main>
-    <h1>This is a counter</h1>
-    <Counter></Counter>
-  </main>
+  <div class="home">
+    <h1>This is an home page</h1>
+  </div>
 </template>
