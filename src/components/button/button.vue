@@ -30,8 +30,6 @@ $button-text-color: #fff;
   display: inline-block;
   font-size: 1em;
   padding: 1em 2em;
-  margin-top: 100px;
-  margin-bottom: 60px;
   -webkit-appearance: none;
   appearance: none;
   background-color: $button-bg;

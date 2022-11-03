@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { usegoogleStore } from '@/stores/google'
 
-import HomeView from '../views/home.vue'
-import LaunchView from '../views/launch/launch.vue'
+import HomeView from '@/views/home.vue'
+import LaunchView from '@/views/launch/launch.vue'
+import ExerciseView from '@/views/exercise_view/exercise_view.vue'
+import ExeciseList from '@/views/exercise_view/exercise_list/exercise_list.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,6 +13,17 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/exercises',
+      component: ExerciseView,
+      children: [
+        {
+          path: '',
+          name: 'exercise_list',
+          component: ExeciseList
+        }
+      ]
     },
     {
       path: '/launch',
@@ -37,7 +50,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _from, next) => {
-  const gstore = usegoogleStore();
+  const gstore = usegoogleStore()
   if (to.name !== 'launch' && !gstore.isAuthenticated) next({ name: 'launch' })
   else next()
 })

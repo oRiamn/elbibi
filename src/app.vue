@@ -16,7 +16,7 @@
     </div>
     <div class="appSubHeader"> Sub-Header </div>
     <div class="appContent">
-      <router-view />
+      <router-view></router-view>
     </div>
     <div class="appFooter">
       <nav class="footerNav">
@@ -25,8 +25,8 @@
             <router-link class="footerNav-itemButton" to="/">Home</router-link>
           </li>
           <li class="footerNav-item">
-            <router-link class="footerNav-itemButton" to="/about"
-              >About</router-link
+            <router-link class="footerNav-itemButton" to="/exercises"
+              >Exercises</router-link
             >
           </li>
           <li class="footerNav-item">
@@ -64,7 +64,7 @@
 
 .appContent {
   flex-grow: 1;
-  padding: 10px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -106,7 +106,7 @@
 }
 
 .footerNav-itemButton:hover,
-.router-link-active.router-link-exact-active {
+.router-link-active {
   background-color:  var(--color-border-hover);
 }
 </style>

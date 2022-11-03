@@ -13,6 +13,10 @@ export type gapimock = {
     sheets: {
       spreadsheets: {
         create: SpyInstance
+        values: {
+          get: SpyInstance,
+          append: SpyInstance
+        }
       }
     }
   }
@@ -31,7 +35,11 @@ export function doGapiMock(scope: any): gapimock {
       },
       sheets: {
         spreadsheets: {
-          create: vi.fn()
+          create: vi.fn(),
+          values: {
+            get: vi.fn(),
+            append: vi.fn()
+          }
         }
       }
     }
