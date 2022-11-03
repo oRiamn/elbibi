@@ -18,7 +18,7 @@ describe('ExerciseList', () => {
 
   it('should load exercise list on setup', async () => {
     const estore = useexerciseStore()
-    mount(ExerciseList, {
+    await mount(ExerciseList, {
       global: { plugins: [pinia] },
       props: {}
     })
@@ -33,7 +33,7 @@ describe('ExerciseList', () => {
     it('should not display add div when exercises not synced', async () => {
       estore.synced = false
 
-      const wrapper = mount(ExerciseList, {
+      const wrapper = await mount(ExerciseList, {
         global: { plugins: [pinia] },
         props: {}
       })
@@ -44,7 +44,7 @@ describe('ExerciseList', () => {
     it('should display add div when exercises not synced', async () => {
       estore.synced = true
 
-      const wrapper = mount(ExerciseList, {
+      const wrapper = await mount(ExerciseList, {
         global: { plugins: [pinia] },
         props: {}
       })
@@ -55,7 +55,7 @@ describe('ExerciseList', () => {
     it('should not display exercise list when exercises not synced', async () => {
       estore.synced = false
 
-      const wrapper = mount(ExerciseList, {
+      const wrapper = await mount(ExerciseList, {
         global: { plugins: [pinia] },
         props: {}
       })
@@ -66,7 +66,7 @@ describe('ExerciseList', () => {
     it('should display add exercise list when exercises not synced', async () => {
       estore.synced = true
 
-      const wrapper = mount(ExerciseList, {
+      const wrapper = await mount(ExerciseList, {
         global: { plugins: [pinia] },
         props: {}
       })
@@ -74,6 +74,9 @@ describe('ExerciseList', () => {
       expect(wrapper.find(listid).exists()).toBe(true)
     })
   })
+
+
+  it.todo('should go to exercise on click')
 
   describe('should add new exercise', () => {
     it.todo('test add exercise')

@@ -5,6 +5,7 @@ import HomeView from '@/views/home.vue'
 import LaunchView from '@/views/launch/launch.vue'
 import ExerciseView from '@/views/exercise_view/exercise_view.vue'
 import ExeciseList from '@/views/exercise_view/exercise_list/exercise_list.vue'
+import Execise from '@/views/exercise_view/exercise/exercise.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +23,11 @@ const router = createRouter({
           path: '',
           name: 'exercise_list',
           component: ExeciseList
+        },
+        {
+          path: ':exerciseId',
+          name: 'exercise',
+          component: Execise
         }
       ]
     },

@@ -16,7 +16,7 @@ describe('Launch', () => {
   })
   it('should load google api on setup', async () => {
     const gstore = usegoogleStore()
-    mount(Launch, {
+    await mount(Launch, {
       global: { plugins: [pinia] },
       props: {}
     })
@@ -29,7 +29,7 @@ describe('Launch', () => {
     it('should not display button when app is not ready', async () => {
       gstore.isReady = false
 
-      const wrapper = mount(Launch, {
+      const wrapper = await mount(Launch, {
         global: { plugins: [pinia] },
         props: {}
       })
@@ -40,7 +40,7 @@ describe('Launch', () => {
     it('should display button when app is ready', async () => {
       gstore.isReady = true
 
-      const wrapper = mount(Launch, {
+      const wrapper = await mount(Launch, {
         global: { plugins: [pinia] },
         props: {}
       })
@@ -58,7 +58,7 @@ describe('Launch', () => {
 
     const gstore = usegoogleStore()
 
-    const wrapper = mount(Launch, {
+    const wrapper = await mount(Launch, {
       global: { plugins: [pinia], mocks: { $router: mockRouter } },
       props: {}
     })
@@ -75,7 +75,7 @@ describe('Launch', () => {
 
     const btnid = '#authentbtn'
     
-    const wrapper = mount(Launch, {
+    const wrapper = await mount(Launch, {
       global: { plugins: [pinia], mocks: { $router: mockRouter } },
       props: {}
     })

@@ -16,6 +16,14 @@ export default defineComponent({
         this.exerciseStore.addExercise(this.newExercise)
         this.newExercise = ''
       }
+    },
+    gotToExercise(exerciseId: number) {
+      this.$router.push({
+        name: 'exercise',
+        params: {
+          exerciseId
+        }
+      })
     }
   },
   setup() {
@@ -41,7 +49,11 @@ export default defineComponent({
       <Button :text="'Add'" v-on:click="addExercise"></Button>
     </div>
     <ul id="exlist" class="exercises">
-      <li v-for="item in exerciseStore.exercises" :key="item.id">
+      <li
+        v-for="item in exerciseStore.exercises"
+        :key="item.id"
+        @click="gotToExercise(item.id)"
+      >
         {{ item.name }}
         <span>></span>
       </li>
