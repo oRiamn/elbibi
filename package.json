@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "author": "Romain Durade",
+  "type": "module",
   "scripts": {
     "build": "vue-tsc --noEmit && vite build",
     "build-storybook": "build-storybook",

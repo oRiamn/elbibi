@@ -9,9 +9,10 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
-dist
 dist-ssr
 *.local
+
+dist
 
 /cypress/videos/
 /cypress/screenshots/
@@ -116,7 +117,6 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/

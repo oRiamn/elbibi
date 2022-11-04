@@ -7,8 +7,9 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePluginHtmlEnv({
-      compiler: true
+      compiler: true,
       // compiler: false // old
+      compress: true
     })
   ],
   resolve: {
@@ -23,5 +24,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom'
-  }
+  },
+  base: "/elbibi/"
 })
