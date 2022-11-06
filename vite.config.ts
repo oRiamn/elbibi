@@ -2,12 +2,37 @@ import vue from '@vitejs/plugin-vue'
 import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 import VitePluginHtmlEnv from 'vite-plugin-html-env'
-import { VitePWA } from "vite-plugin-pwa"
+import { VitePWA, VitePWAOptions } from "vite-plugin-pwa"
+
+const pwaOptions: Partial<VitePWAOptions> = {
+  mode: 'development',
+  base: '/',
+  srcDir: "src",
+  filename: "sw.ts",
+  includeAssets: ['favicon.svg'],
+  manifest: {
+    name: 'El Bibi',
+    short_name: 'LBB',
+    theme_color: '#ffffff',
+    display: "fullscreen",
+    orientation: "portrait",
+    background_color: "#ffffff",
+    lang: "fr",
+    ...require('./public/manifest.json')
+  },
+  devOptions: {
+    enabled: true,
+    /* when using generateSW the PWA plugin will switch to classic */
+    type: 'module',
+    navigateFallback: 'index.html',
+  },
+}
+
 
 export default defineConfig({
   plugins: [
     vue(),
-    VitePWA(),
+    VitePWA(pwaOptions),
     VitePluginHtmlEnv({
       compiler: true,
       // compiler: false // old
