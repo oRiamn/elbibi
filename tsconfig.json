@@ -13,20 +13,23 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost", "WebWorker"],
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": false,
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "types": [
+      "vite",
       "vite/client",
       "vitest/globals",
       "google.accounts",
       "gapi",
       "gapi.auth2",
       "gapi.client.drive",
-      "gapi.client.sheets"
+      "gapi.client.sheets",
+      "vite-plugin-pwa",
+      "vite-plugin-pwa/client"
     ],
     "noImplicitAny": true
   },

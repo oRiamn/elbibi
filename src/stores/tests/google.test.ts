@@ -30,8 +30,8 @@ describe('Google Store', () => {
 
   describe('loadGoogleApi', () => {
     let loadScriptSpy: SpyInstance
-    beforeEach(() => {
-      loadScriptSpy = spyOn(loadScript, 'loadScript')
+    beforeEach(() => {      
+      loadScriptSpy = vi.spyOn(loadScript, 'loadScript')
       console.log = vi.fn()
       console.error = vi.fn()
     })
