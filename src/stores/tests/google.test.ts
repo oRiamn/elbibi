@@ -1,10 +1,10 @@
 import { createPinia, setActivePinia } from 'pinia'
-import { SpyInstance, spyOn, vi } from 'vitest'
+import { SpyInstance, vi } from 'vitest'
 import * as loadScript from 'vue-plugin-load-script'
-import { gapimock, doGapiMock } from './mocks/lib/gapi'
-import { googlemock, doGoogleMock } from './mocks/lib/google'
 
 import { usegoogleStore } from '../google'
+import { doGapiMock,gapimock } from './mocks/lib/gapi'
+import { doGoogleMock,googlemock } from './mocks/lib/google'
 
 describe('Google Store', () => {
   let gapi: gapimock
@@ -261,7 +261,7 @@ describe('Google Store', () => {
     })
 
     it('should call google.accounts.oauth2.initTokenClient', async () => {
-      let callback: Function
+      let callback: CallableFunction
       google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
         callback = config.callback
         return token
@@ -281,7 +281,7 @@ describe('Google Store', () => {
     })
 
     it('should call gapi.client.init', async () => {
-      let callback: Function
+      let callback: CallableFunction
       google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
         callback = config.callback
         return token
@@ -300,7 +300,7 @@ describe('Google Store', () => {
     })
 
     it('should call token.requestAccessToken', async () => {
-      let callback: Function
+      let callback: CallableFunction
       google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
         callback = config.callback
         return token
@@ -317,7 +317,7 @@ describe('Google Store', () => {
 
     describe('when authentication is fullyfied', () => {
       beforeEach(() => {
-        let callback: Function
+        let callback: CallableFunction
         google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
           callback = config.callback
           return token
@@ -344,7 +344,7 @@ describe('Google Store', () => {
     describe('when authentication fail', () => {
       const errormsg = 'an error message'
       beforeEach(() => {
-        let callback: Function
+        let callback: CallableFunction
         google.accounts.oauth2.initTokenClient.mockImplementation((config) => {
           callback = config.callback
           return token

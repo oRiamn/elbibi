@@ -1,8 +1,8 @@
-import { useworkoutStore } from '../workout'
-
 import { createPinia, setActivePinia } from 'pinia'
 import { vi } from 'vitest'
+
 import { usegoogleStore } from '../google'
+import { useworkoutStore } from '../workout'
 import { doGapiMock, gapimock } from './mocks/lib/gapi'
 
 describe('Workout Store', () => {

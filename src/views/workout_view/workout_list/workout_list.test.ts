@@ -1,10 +1,11 @@
-import WorkoutList from './workout_list.vue'
-
-import { vi } from 'vitest'
-import { mount } from '@vue/test-utils'
-import { useworkoutStore } from '@/stores/workout'
-import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
+import { mount } from '@vue/test-utils'
+import { setActivePinia } from 'pinia'
+import { vi } from 'vitest'
+
+import { useworkoutStore } from '@/stores/workout'
+
+import WorkoutList from './workout_list.vue'
 
 const pinia = createTestingPinia()
 setActivePinia(pinia)

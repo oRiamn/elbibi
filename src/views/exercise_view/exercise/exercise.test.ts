@@ -1,10 +1,10 @@
-import Exercise from './exercise.vue'
-
-import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
-import { useexerciseStore } from '../../../stores/exercise'
-import { SpyInstance, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { setActivePinia } from 'pinia'
+import { SpyInstance, vi } from 'vitest'
+
+import { useexerciseStore } from '../../../stores/exercise'
+import Exercise from './exercise.vue'
 
 vi.mock('vue-router') // mock the import
 
@@ -36,6 +36,6 @@ describe('Exercise', () => {
       props: {}
     })
 
-    expect(wrapper.find('#exname').text()).toBe("Exercise squat")
+    expect(wrapper.find('#exname').text()).toBe('Exercise squat')
   })
 })

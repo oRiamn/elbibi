@@ -1,9 +1,10 @@
-import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
-
 import { mount } from '@vue/test-utils'
-import Launch from './launch.vue'
+import { setActivePinia } from 'pinia'
+
 import { usegoogleStore } from '@/stores/google'
+
+import Launch from './launch.vue'
 
 const pinia = createTestingPinia()
 setActivePinia(pinia)

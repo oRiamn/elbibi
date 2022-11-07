@@ -22,7 +22,7 @@ export type gapimock = {
   }
 }
 
-export function doGapiMock(scope: any): gapimock {
+export function doGapiMock(scope: Window & typeof globalThis): gapimock {
   const mock = {
     load: vi.fn(),
     client: {

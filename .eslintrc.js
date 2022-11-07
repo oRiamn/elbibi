@@ -4,14 +4,11 @@ module.exports = {
     node: true,
     'vue/setup-compiler-macros': true
   },
-
   parserOptions: {
     parser: '@typescript-eslint/parser',
     ecmaVersion: 'latest'
   },
-
   plugins: ['simple-import-sort'],
-
   extends: [
     'eslint:recommended',
     '@vue/typescript/recommended',

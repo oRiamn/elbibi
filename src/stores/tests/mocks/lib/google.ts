@@ -7,7 +7,7 @@ export type googlemock = {
     }
   }
 }
-export function doGoogleMock(scope: any): googlemock {
+export function doGoogleMock(scope: Window & typeof globalThis): googlemock {
   const mock = {
     accounts: {
       oauth2: {

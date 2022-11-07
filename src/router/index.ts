@@ -1,15 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { usegoogleStore } from '@/stores/google'
 
+import { usegoogleStore } from '@/stores/google'
+import Execise from '@/views/exercise_view/exercise/exercise.vue'
+import ExeciseList from '@/views/exercise_view/exercise_list/exercise_list.vue'
+import ExerciseView from '@/views/exercise_view/exercise_view.vue'
 import HomeView from '@/views/home.vue'
 import LaunchView from '@/views/launch/launch.vue'
-
-import ExerciseView from '@/views/exercise_view/exercise_view.vue'
-import ExeciseList from '@/views/exercise_view/exercise_list/exercise_list.vue'
-import Execise from '@/views/exercise_view/exercise/exercise.vue'
-
-import WorkoutView from '@/views/workout_view/workout_view.vue'
 import WorkoutList from '@/views/workout_view/workout_list/workout_list.vue'
+import WorkoutView from '@/views/workout_view/workout_view.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

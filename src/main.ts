@@ -1,6 +1,6 @@
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
-import LoadScript from "vue-plugin-load-script";
+import LoadScript from 'vue-plugin-load-script';
 
 import App from './app.vue'
 import router from './router'
