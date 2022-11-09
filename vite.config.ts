@@ -5,12 +5,12 @@ import VitePluginHtmlEnv from 'vite-plugin-html-env'
 import { VitePWA, VitePWAOptions } from 'vite-plugin-pwa'
 
 const pwaOptions: Partial<VitePWAOptions> = {
-  mode: 'development',
-  base: '/',
-  srcDir: 'src',
-  filename: 'sw.ts',
-  includeAssets: ['favicon.svg'],
+  mode: 'production',
   registerType: 'autoUpdate',
+  strategies: 'generateSW',
+  injectRegister: 'inline',
+  minify: true,
+  manifestFilename: 'manifest.json',
   manifest: {
     name: 'El Bibi',
     short_name: 'LBB',
@@ -27,6 +27,12 @@ const pwaOptions: Partial<VitePWAOptions> = {
     type: 'module',
     navigateFallback: 'index.html',
   },
+  workbox: {
+    globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+    clientsClaim: true,
+    skipWaiting: true
+    
+  }
 }
 
 

@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useappStatusStore } from "./stores/app_status";
+
+const appStatus = useappStatusStore();
+appStatus.sync()
+</script>
 
 <template>
   <div class="appContainer">
@@ -12,7 +17,9 @@
           height="50"
         />
       </div>
-      <div class="userMenu">MENU</div>
+      <div class="userMenu">
+        {{ appStatus.isOnline ? "On" : "Off" }} Line
+      </div>
     </div>
     <div class="appSubHeader"> Sub-Header </div>
     <div class="appContent">
