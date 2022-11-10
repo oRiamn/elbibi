@@ -70,22 +70,26 @@ describe('Workout Store', () => {
           ]
         }
       })
+
+      process.env.TZ = 'Asia/Calcutta'
+
       const wstore = useworkoutStore()
       await wstore.getWorkouts()
+      
 
       expect(wstore.workouts).toStrictEqual([
         {
           id: 1,
-          date: new Date('2022-10-31T14:32:10.000Z'),
+          date: new Date('2022-10-31T15:32:10.000Z'),
           exercise: 'squat'
         },
         {
           id: 2,
-          date: new Date('2022-11-01T14:42:32.000Z'),
+          date: new Date('2022-11-01T15:42:32.000Z'),
           exercise: 'pompe'
         },
-        { id: 3, date: new Date('2022-11-01T15:01:30.000Z'), exercise: 'dips' },
-        { id: 4, date: new Date('2022-11-03T12:21:04.000Z'), exercise: 'squat' }
+        { id: 3, date: new Date('2022-11-01T16:01:30.000Z'), exercise: 'dips' },
+        { id: 4, date: new Date('2022-11-03T13:21:04.000Z'), exercise: 'squat' }
       ])
     })
 

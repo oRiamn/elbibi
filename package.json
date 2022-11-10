@@ -14,8 +14,8 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview --port 8080",
     "storybook": "start-storybook -p 6006",
-    "test": "vitest run --reporter verbose",
-    "test:watch": "vitest watch",
+    "test": "TZ=UTC vitest run --reporter verbose",
+    "test:watch": "TZ=UTC vitest watch",
     "typecheck": "vue-tsc --noEmit"
   },
   "resolutions": {
