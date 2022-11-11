@@ -6,6 +6,7 @@ import { useappStatusStore } from '../app_status'
 describe('AppStatus Store', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    console.log = vi.fn()
   })
 
   it('should define isOnline using navigator API', () => {
@@ -22,8 +23,15 @@ describe('AppStatus Store', () => {
 
   describe('sync', () => {
     let spyAddEventListener: SpyInstance;
+    let eventsListeners: Map<string, EventListenerOrEventListenerObject>
     beforeEach(() => {
-      spyAddEventListener = vi.spyOn(window, 'addEventListener')
+      const appstatusStore = useappStatusStore();
+      appstatusStore.isSynced = false
+
+      eventsListeners = new Map()
+      spyAddEventListener = vi
+        .spyOn(window, 'addEventListener')
+        .mockImplementation((evnt, fnct) => { eventsListeners.set(evnt, fnct) })
     });
 
     it('should add 2 event listener to window ', async () => {
@@ -51,21 +59,36 @@ describe('AppStatus Store', () => {
     });
 
     it('should patch isOnline to true on online event', async () => {
-      const event = new Event('online');
       const appstatusStore = useappStatusStore()
       await appstatusStore.sync()
       appstatusStore.isOnline = false
-      window.dispatchEvent(event);
+        ; (eventsListeners.get('online') as EventListener)(new Event('online'))
       expect(appstatusStore.isOnline).toBe(true)
     })
 
+    it('should log online event', async () => {
+      const appstatusStore = useappStatusStore()
+      await appstatusStore.sync()
+        ; (eventsListeners.get('online') as EventListener)(new Event('online'))
+      expect(console.log).toHaveBeenCalledTimes(1)
+      expect(console.log).toHaveBeenCalledWith('app is on online mode')
+    })
+
+
     it('should patch isOnline to false on offline event', async () => {
-      const event = new Event('offline');
       const appstatusStore = useappStatusStore()
       await appstatusStore.sync()
       appstatusStore.isOnline = true
-      window.dispatchEvent(event);
+        ; (eventsListeners.get('offline') as EventListener)(new Event('offline'))
       expect(appstatusStore.isOnline).toBe(false)
+    })
+
+    it('should log offline event', async () => {
+      const appstatusStore = useappStatusStore()
+      await appstatusStore.sync()
+        ; (eventsListeners.get('offline') as EventListener)(new Event('offline'))
+      expect(console.log).toHaveBeenCalledTimes(1)
+      expect(console.log).toHaveBeenCalledWith('app is on offline mode')
     })
   });
 

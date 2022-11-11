@@ -12,11 +12,13 @@ export const useappStatusStore = defineStore({
     sync() {
       if (!this.isSynced) {
         window.addEventListener('offline', () => {
+          console.log('app is on offline mode')
           this.$patch((state) => {
             state.isOnline = false;
           })
         });
         window.addEventListener('online', () => {
+          console.log('app is on online mode')
           this.$patch((state) => {
             state.isOnline = true;
           })
