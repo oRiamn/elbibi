@@ -1,0 +1,1 @@
+import{_ as e,o as s,c as t,a as n}from"./index.c0545fa7.js";const _={},c={class:"settings"},o=n("h1",null,"This is an settings page",-1),a=[o];function i(r,d){return s(),t("div",c,a)}const f=e(_,[["render",i]]);export{f as default};
