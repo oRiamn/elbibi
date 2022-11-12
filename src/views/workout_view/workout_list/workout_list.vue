@@ -1,25 +1,56 @@
 <script lang="ts">
-import { useworkoutStore } from '@/stores/workout'
 import { defineComponent } from 'vue'
+
+import Button from '@/components/button/button.vue'
+import { useworkoutStore } from '@/stores/workout'
+import { ExerciseDefinition, useexerciseStore } from '@/stores/exercise'
 
 export default defineComponent({
   name: 'WorkoutList',
-  components: {},
+  components: {
+    Button
+  },
   props: {},
   emits: [],
   setup() {
     const wstore = useworkoutStore()
     wstore.getWorkouts()
+
+    const estore = useexerciseStore()
+    estore.getExercises()
     return {
-      wstore
+      wstore,
+      newWorkout: null as ExerciseDefinition | null,
+      estore
+    }
+  },
+  methods: {
+    addWorkout() {
+        if (this.newWorkout) {
+          const today = new Date()
+          this.wstore.addWorkout(this.newWorkout.name, today)
+          this.newWorkout = null
+        }
     }
   }
 })
 </script>
 
 <template>
-  <div class="workoutlist">
-    <ul id="exlist" class="workouts">
+  <div v-if="wstore.synced" class="workoutlist">
+     <div id="addworkout" class="add">
+      <select v-model="newWorkout">
+        <option disabled value="null">New workout</option>
+        <option 
+          v-for="item in estore.exercises"
+          :key="item.id"
+          v-bind:value="item">
+          {{ item.name }}
+        </option>
+      </select>
+      <Button :text="'Add'" v-on:click="addWorkout"></Button>
+    </div>
+    <ul id="worklist" class="workouts">
       <li
         v-for="item in wstore.workouts"
         :key="item.id"
@@ -69,6 +100,14 @@ export default defineComponent({
       background: #acd2ff;
       border-radius: 2px;
       letter-spacing: 1px;
+    }
+  }
+
+  .add {
+    flex: 0;
+    select {
+      display: flex;
+      flex: 1;
     }
   }
 }

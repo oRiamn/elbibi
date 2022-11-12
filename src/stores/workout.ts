@@ -28,6 +28,11 @@ function googlesheetsDateToJSDate(serial: number): Date {
   )
 }
 
+function dateToGooglesheetsDate(inDate: Date): number {
+  const returnDateTime = 25569.0 + ((inDate.getTime() - (inDate.getTimezoneOffset() * 60 * 1000)) / (1000 * 60 * 60 * 24));
+  return returnDateTime
+}
+
 const sd = {
   i: 'workout',
   col: {
@@ -78,6 +83,42 @@ export const useworkoutStore = defineStore({
           state.synced = true
           state.workouts = workouts
         })
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async addWorkout(exerciseName: string, date: Date) {
+      try {
+        const gstore = usegoogleStore()
+        const response =
+          await window.gapi.client.sheets.spreadsheets.values.append({
+            spreadsheetId: gstore.spreadsheetId,
+            range: `${sd.i}!${sd.col.exercise.s}`,
+            insertDataOption: 'INSERT_ROWS',
+            valueInputOption: 'RAW',
+            responseValueRenderOption: 'UNFORMATTED_VALUE',
+            responseDateTimeRenderOption: 'SERIAL_NUMBER',
+            includeValuesInResponse: true,
+            resource: {
+              values: [[
+                dateToGooglesheetsDate(date),
+                exerciseName
+              ]]
+            }
+          })
+
+        if (response.result.updates && response.result.updates.updatedRange) {
+          const [, cell] = response.result.updates.updatedRange.split(':B')
+          const cellnumber = parseInt(cell)
+          console.log('workouts updated successfully')
+          this.$patch((state) => {
+            state.workouts.push({
+              id: cellnumber,
+              date: googlesheetsDateToJSDate(dateToGooglesheetsDate(date)),
+              exercise: exerciseName
+            })
+          })
+        }
       } catch (error) {
         console.error(error)
       }

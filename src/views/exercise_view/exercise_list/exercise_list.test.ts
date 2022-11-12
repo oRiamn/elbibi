@@ -3,7 +3,8 @@ import { mount } from '@vue/test-utils'
 import { setActivePinia } from 'pinia'
 import { vi } from 'vitest'
 
-import { useexerciseStore } from '../../../stores/exercise'
+import { useexerciseStore } from '@/stores/exercise'
+
 import ExerciseList from './exercise_list.vue'
 
 const pinia = createTestingPinia()
@@ -41,7 +42,7 @@ describe('ExerciseList', () => {
       expect(wrapper.find(divid).exists()).toBe(false)
     })
 
-    it('should display add div when exercises not synced', async () => {
+    it('should display add div when exercises synced', async () => {
       estore.synced = true
 
       const wrapper = await mount(ExerciseList, {
@@ -63,7 +64,7 @@ describe('ExerciseList', () => {
       expect(wrapper.find(listid).exists()).toBe(false)
     })
 
-    it('should display add exercise list when exercises not synced', async () => {
+    it('should display exercise list when exercises synced', async () => {
       estore.synced = true
 
       const wrapper = await mount(ExerciseList, {
@@ -74,7 +75,6 @@ describe('ExerciseList', () => {
       expect(wrapper.find(listid).exists()).toBe(true)
     })
   })
-
 
   it.todo('should go to exercise on click')
 

@@ -13,6 +13,9 @@ describe('Workout Store', () => {
     gapi = doGapiMock(window)
     const gstore = usegoogleStore()
     gstore.spreadsheetId = spreadsheetId
+
+    console.log = vi.fn()
+    console.error = vi.fn()
   })
 
   it('should define synced to false by default', () => {
@@ -26,10 +29,6 @@ describe('Workout Store', () => {
   })
 
   describe('getWorkouts', () => {
-    beforeEach(() => {
-      console.log = vi.fn()
-      console.error = vi.fn()
-    })
 
     it('should call gapi.client.sheets.spreadsheets.values.get for obtain workout list', async () => {
       gapi.client.sheets.spreadsheets.values.get.mockResolvedValue({
@@ -70,12 +69,9 @@ describe('Workout Store', () => {
           ]
         }
       })
-
-      process.env.TZ = 'Asia/Calcutta'
-
       const wstore = useworkoutStore()
       await wstore.getWorkouts()
-      
+
 
       expect(wstore.workouts).toStrictEqual([
         {
@@ -125,7 +121,7 @@ describe('Workout Store', () => {
         expect(wstore.synced).toBe(false)
       })
 
-      it('should keep exercises to initial value', async () => {
+      it('should keep workouts to initial value', async () => {
         const wstore = useworkoutStore()
         await wstore.getWorkouts()
 
@@ -133,4 +129,115 @@ describe('Workout Store', () => {
       })
     })
   })
+
+  describe('addWorkout', () => {
+    const newWorkout = {
+      id: 5,
+      date: new Date('2022-11-22T17:35:20.000Z'),
+      exercise: 'curls'
+    }
+    const oldWorkouts = [
+      {
+        id: 1,
+        date: new Date('2022-10-31T15:32:10.000Z'),
+        exercise: 'squat'
+      },
+      {
+        id: 2,
+        date: new Date('2022-11-01T15:42:32.000Z'),
+        exercise: 'pompe'
+      },
+      { id: 3, date: new Date('2022-11-01T16:01:30.000Z'), exercise: 'dips' },
+      { id: 4, date: new Date('2022-11-03T13:21:04.000Z'), exercise: 'squat' }
+    ]
+    beforeEach(() => {
+      console.log = vi.fn()
+      console.error = vi.fn()
+
+      const wstore = useworkoutStore()
+      wstore.workouts = [...oldWorkouts]
+      wstore.synced = true
+    })
+
+    it('should call gapi.client.sheets.spreadsheets.values.append to add workout', async () => {
+      gapi.client.sheets.spreadsheets.values.append.mockResolvedValue({
+        result: {
+          updates: {
+            updatedRange: `workout!A${newWorkout.id}:B${newWorkout.id}`
+          }
+        }
+      })
+      const wstore = useworkoutStore()
+      await wstore.addWorkout(newWorkout.exercise, newWorkout.date)
+      expect(gapi.client.sheets.spreadsheets.values.append).toBeCalledTimes(1)
+      expect(gapi.client.sheets.spreadsheets.values.append).toBeCalledWith({
+        spreadsheetId,
+        range: 'workout!B2',
+        insertDataOption: 'INSERT_ROWS',
+        valueInputOption: 'RAW',
+        responseValueRenderOption: 'UNFORMATTED_VALUE',
+        responseDateTimeRenderOption: 'SERIAL_NUMBER',
+        includeValuesInResponse: true,
+        resource: {
+          values: [[
+            44887.73287037037,
+            newWorkout.exercise
+          ]]
+        }
+      })
+    })
+
+    it('should append new workout in store', async () => {
+      gapi.client.sheets.spreadsheets.values.append.mockResolvedValue({
+        result: {
+          updates: {
+            updatedRange: `workout!A${newWorkout.id}:B${newWorkout.id}`
+          }
+        }
+      })
+      const wstore = useworkoutStore()
+      await wstore.addWorkout(newWorkout.exercise, newWorkout.date)
+      expect(wstore.workouts).toStrictEqual([...oldWorkouts, newWorkout])
+    })
+
+    it('should log update success', async () => {
+      gapi.client.sheets.spreadsheets.values.append.mockResolvedValue({
+        result: {
+          updates: {
+            updatedRange: `workout!A${newWorkout.id}:B${newWorkout.id}`
+          }
+        }
+      })
+      const wstore = useworkoutStore()
+      await wstore.addWorkout(newWorkout.exercise, newWorkout.date)
+      expect(console.log).toHaveBeenCalledTimes(1)
+      expect(console.log).toHaveBeenCalledWith('workouts updated successfully')
+    })
+
+    describe('when  gapi.client.sheets.spreadsheets.values.append  fail', () => {
+      const erromsg = 'an error message'
+      beforeEach(() => {
+        gapi.client.sheets.spreadsheets.values.append.mockRejectedValue(erromsg)
+      })
+
+      it('should log error', async () => {
+        const wstore = useworkoutStore()
+        await wstore.addWorkout(newWorkout.exercise, newWorkout.date)
+        expect(console.error).toHaveBeenCalledTimes(1)
+        expect(console.error).toHaveBeenCalledWith(erromsg)
+      })
+
+      it('should keep synced to initial value', async () => {
+        const wstore = useworkoutStore()
+        await wstore.addWorkout(newWorkout.exercise, newWorkout.date)
+        expect(wstore.synced).toBe(true)
+      })
+
+      it('should keep workouts to initial value', async () => {
+        const wstore = useworkoutStore()
+        await wstore.addWorkout(newWorkout.exercise, newWorkout.date)
+        expect(wstore.workouts).toStrictEqual(oldWorkouts)
+      })
+    })
+  });
 })
